@@ -2,11 +2,10 @@
 var path = require('path');
 var libPath = path.join(__dirname, 'libs');
 
-var findOne = require(path.join(libPath, 'find'));
+var findOne = require(path.join(libPath, 'findOne'));
+var saveMethod = require(path.join(libPath, 'save'));
 
 module.exports = function(sails) {
-
-
 	function patch() {
         sails
             .util
@@ -18,10 +17,9 @@ module.exports = function(sails) {
                 //build from associations
                 if (model.globalId) {
             		findOne(model);
+                    saveMethod(model);
                     //patch sails `create()` method
-                    console.log(model.globalId);
-                    console.log(model);
-
+                    
                 }
             });
     }
@@ -35,7 +33,6 @@ module.exports = function(sails) {
                     //bind custom errors logic
                     //and let sails to continue
                     patch();
-
                     done();
                 });
         }

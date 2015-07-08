@@ -1,12 +1,15 @@
 {
- "name": "sails-hook-audittrail",
- "version": "0.0.1",
- "description": "This hook will implement audit trail for your model",
- "main": "index.js",
- "sails": {
-   "isHook": true
- },
- "devDependencies": {
-   "sails": "~0.11.0"
-}
+  "name": "sails-hook-audittrail",
+  "version": "0.0.1",
+  "description": "This hook will implement audit trail for your model",
+  "main": "index.js",
+  "sails": {
+    "isHook": true
+  },
+  "devDependencies": {
+    "nodash": "^0.7.1",
+    "sails": "~0.11.0",
+    "underscore": "^1.8.3",
+    "waterline": "^0.10.25"
+  }
 }
