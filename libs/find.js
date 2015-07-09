@@ -14,26 +14,34 @@ module.exports = function(model) {
     //remember sails defined update
     //method
     //See https://github.com/balderdashy/waterline/blob/master/lib/waterline/query/finders/basic.js
-    var sailsFindOne = model.findOne;
+    var sailsFind = model.find;
     model.auditor = {};
     //prepare new update method
     //which wrap sailsUpdate
     //with custom error message checking
-    function findOne(criteria, callback) {
+    function find(criteria, callback) {
        	// if no callback passed
         // See https://github.com/balderdashy/waterline/blob/master/lib/waterline/query/finders/basic.js#L49
         if(typeof callback !== 'function') {
 	      return sailsFindOne.call(model,criteria,null);
 	    }
         //helper.getAttributesName();
-        sailsFindOne.call(model,criteria,function(err,results) {
-            results.auditor = new Auditor(model,criteria,results);
-            results.save = save(model,results);
-	        callback(err,results);
+        sailsFind.call(model,criteria,function(err,results) {
+        	if(err) {
+        		callback(err);
+        	} else {
+        		var newResults = [];
+	        	_.forEach(results,function(value) {
+	        		value.auditor = new Auditor(model,criteria,value);
+	            	value.save = save(model,value);
+	            	newResults.push(value);
+	        	})
+		        callback(err,newResults);
+        	}
         });
     }
 
     //bind our new update
     //to our models
-    model.findOne = findOne;
+    model.find = find;
 };

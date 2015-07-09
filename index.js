@@ -1,9 +1,9 @@
 //dependencies
-var path = require('path');
-var libPath = path.join(__dirname, 'libs');
-
-var findOne = require(path.join(libPath, 'findOne'));
-var saveMethod = require(path.join(libPath, 'save'));
+var path = require('path'),
+    libPath = path.join(__dirname, 'libs'),
+    findOne = require(path.join(libPath, 'findOne')),
+    findM = require(path.join(libPath, 'find')),
+    update = require(path.join(libPath, 'update'))
 
 module.exports = function(sails) {
 	function patch() {
@@ -17,9 +17,9 @@ module.exports = function(sails) {
                 //build from associations
                 if (model.globalId) {
             		findOne(model);
-                    saveMethod(model);
+                    findM(model);
+                    update(model);
                     //patch sails `create()` method
-                    
                 }
             });
     }

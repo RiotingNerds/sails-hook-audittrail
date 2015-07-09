@@ -18,7 +18,7 @@ module.exports = function(model,criteria,results,ignoreAttr) {
 	if(_attributes.length == 0) {
 		_.forEach(referanceModel.attributes,function(value,key){
 			if(!_.isFunction(value)) {
-				if(!_.isUndefined(ignoreAttr) && _.indexOf(ignoreAttr,key)<0) {
+				if(_.isUndefined(ignoreAttr) || _.indexOf(ignoreAttr,key)<0) {
 					if(!value.hasOwnProperty('collection')) {
 						_attributes.push(key);
 					}
@@ -54,6 +54,7 @@ module.exports = function(model,criteria,results,ignoreAttr) {
 			if(newValues.hasOwnProperty(key)) {
 				if(value !== newValues[key]) {
 					changedValue[timestamp].push({
+						column:key,
 						oldValue:value,
 						newValue:newValues[key],
 						modelID:referanceModel.globalId
@@ -81,7 +82,7 @@ module.exports = function(model,criteria,results,ignoreAttr) {
 
 	constructor = {
 		startAuditing:startAuditing,
-		getOriginalAttributeValues:getOriginalAttributeValues
+		attributes:attributes
 	}
 
 	return constructor;
