@@ -1,2 +1,2 @@
-# sails-hook-audittrail
+# Audit Trail
 Audit trail implementation

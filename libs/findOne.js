@@ -27,7 +27,7 @@ module.exports = function(model) {
 	    }
         //helper.getAttributesName();
         sailsFindOne.call(model,criteria,function(err,results) {
-            results.auditor = new Auditor(model,criteria,results);
+            results.auditor = new Auditor(model,results);
             results.save = save(model,results);
 	        callback(err,results);
         });

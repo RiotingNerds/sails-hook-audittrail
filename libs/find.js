@@ -23,7 +23,7 @@ module.exports = function(model) {
        	// if no callback passed
         // See https://github.com/balderdashy/waterline/blob/master/lib/waterline/query/finders/basic.js#L49
         if(typeof callback !== 'function') {
-	      return sailsFindOne.call(model,criteria,null);
+	      return sailsFind.call(model,criteria,null);
 	    }
         //helper.getAttributesName();
         sailsFind.call(model,criteria,function(err,results) {
@@ -32,7 +32,7 @@ module.exports = function(model) {
         	} else {
         		var newResults = [];
 	        	_.forEach(results,function(value) {
-	        		value.auditor = new Auditor(model,criteria,value);
+	        		value.auditor = new Auditor(model,value);
 	            	value.save = save(model,value);
 	            	newResults.push(value);
 	        	})

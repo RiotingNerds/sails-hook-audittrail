@@ -14,21 +14,12 @@ module.exports = function(model) {
     //remember sails defined create
     //method
     //See https://github.com/balderdashy/waterline/blob/master/lib/waterline/query/dql/create.js
-    var sailsCreate = model.create;
-
+    var sailsDestroy = model.destroy;
+    
     //prepare new create method
     //which wrap sailsCreate
     //with custom error message checking
-    function create(values, callback) {
-
-        // handle Deferred where 
-        // it passes criteria first
-        // see https://github.com/balderdashy/waterline/blob/master/lib/waterline/query/dql/create.js#L26
-        if (arguments.length === 3) {
-            var args = Array.prototype.slice.call(arguments);
-            callback = args.pop();
-            values = args.pop();
-        }
+    function destroy(criteria, callback) {
 
         // return Deferred
         // if no callback passed
@@ -36,25 +27,35 @@ module.exports = function(model) {
         if (typeof callback !== 'function') {
             //this refer to the
             //model context
-            return new Deferred(model, model.create, {}, values);
+            return new Deferred(model, model.destroy, criteria);
         }
 
         //otherwise
         //call sails create
-        sailsCreate
-            .call(model, values, function(error, result) {
-                
-                if (error) {
-                    callback(error);
-                } else {
-                    result.auditor = new Auditor(model)
-                    result.auditor.startAuditing(result)
-                    callback(null, result);
-                }
-            });
+        model.find(criteria,function(err,foundResult) {
+        	console.log(foundResult);
+        	if(!err) {
+        		sailsDestroy
+		            .call(model, criteria, function(error, result) {
+		                if (error) {
+		                    callback(error);
+		                } else {
+							_.forEach(result,function(value) {
+	                            _.forEach(foundResult,function(originalValue) {
+	                                originalValue.auditor.startAuditing({});
+	                            })
+	                        })
+		                    callback(null, result);
+		                }
+		            });
+        	} else {
+        		callback(err);
+        	}
+        })
+        
     }
 
     //bind our new create
     //to our models
-    model.create = create;
+    model.destroy = destroy;
 };

@@ -1,6 +1,8 @@
 'use strict';
 //import sails waterline Deferred
-var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferred');
+var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferred'),
+    Auditor = require('./auditor'),
+    ultis = require('./ultis')
 
 /**
  * @description path sails `update()` method to allow
@@ -29,7 +31,8 @@ module.exports = function(model) {
             return new Deferred(model, model.update, criterias, values);
         }
         model.find(criterias,function(err,results) {
-            sailsUpdate
+            if(!err) {
+                sailsUpdate
                 .call(model, criterias, values, function(error, result) {
                     //any update error
                     //found?
@@ -38,10 +41,10 @@ module.exports = function(model) {
                     } else {
                         //no error
                         //return
+                        var PK = ultis.getPK(model)
                         _.forEach(result,function(value) {
-                            _.forEach(results,function(originalValue) {
-                                
-                                if(originalValue['id'] == value['id']) {
+                            _.forEach(results,function(originalValue) {  
+                                if(originalValue[PK] == value[PK]) {
                                     originalValue.auditor.startAuditing(value);
                                 }
                             })
@@ -49,6 +52,8 @@ module.exports = function(model) {
                         callback(null, result);
                     }
                 });
+            }
+            
         }) 
 
         //otherwise
