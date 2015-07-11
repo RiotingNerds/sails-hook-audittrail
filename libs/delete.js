@@ -10,7 +10,7 @@ var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferre
  * @param  {Function} validateCustom a function to transform sails `ValidationError`
  *                                   to custome `Errors`
  */
-module.exports = function(model) {
+module.exports = function(model,config) {
     //remember sails defined create
     //method
     //See https://github.com/balderdashy/waterline/blob/master/lib/waterline/query/dql/create.js

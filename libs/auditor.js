@@ -1,8 +1,9 @@
 'use strict';
 var _ = require('../node_modules/lodash'),
-	ultis = require('./ultis')
+	ultis = require('./ultis'),
+	modelAudit = require('../models/auditTrail')
 
-module.exports = function(model,results) {
+module.exports = function(model,config,results) {
 
 	var referanceModel = model;
 
@@ -11,6 +12,8 @@ module.exports = function(model,results) {
 	var _attributes = [];
 
 	var attributes = {};
+
+	var Auditor =config.model
 
 	var availableOpertaion = {
 		create:'insert',
@@ -54,7 +57,7 @@ module.exports = function(model,results) {
 				}
 			}
 			changedValue.push({
-				column:key,
+				columnName:key,
 				oldValue:value,
 				newValue:newValues[key],
 				modelID:referanceModel.globalId,
@@ -68,6 +71,9 @@ module.exports = function(model,results) {
 
 	var saveDiff = function(changedValue) {
 		console.log(changedValue);
+		Auditor.create(changedValue,function(err,newResult) {
+			
+		})
 	}
 
 	var startAuditing = function(newValues,operation) {

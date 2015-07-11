@@ -10,7 +10,7 @@ var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferre
  * @param  {Function} validateCustom a function to transform sails `ValidationError`
  *                                   to custome `Errors`
  */
-module.exports = function(model) {
+module.exports = function(model,config) {
     //remember sails defined findOrCreate
     //method
     //See https://github.com/balderdashy/waterline/blob/master/lib/waterline/query/composite.js#L24
@@ -39,7 +39,7 @@ module.exports = function(model) {
                 } else {
                     //no error
                     //return
-                    result.auditor = new Auditor(model);
+                    result.auditor = new Auditor(model,config);
                     result.auditor.startAuditing(result);
                     //console.log(result.auditor);
                     callback(null, result);

@@ -10,7 +10,7 @@ var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferre
  *              custom error message definitions
  * @param  {Object} model          a valid sails model
  */
-module.exports = function(model) {
+module.exports = function(model,config) {
     //remember sails defined update
     //method
     //See https://github.com/balderdashy/waterline/blob/master/lib/waterline/query/finders/basic.js
@@ -32,7 +32,7 @@ module.exports = function(model) {
         	} else {
         		var newResults = [];
 	        	_.forEach(results,function(value) {
-	        		value.auditor = new Auditor(model,value);
+	        		value.auditor = new Auditor(model,config,value);
 	            	value.save = save(model,value);
 	            	newResults.push(value);
 	        	})

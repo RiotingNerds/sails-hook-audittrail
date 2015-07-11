@@ -25,5 +25,13 @@ module.exports = {
 				return false;
 		}
 		return true;
+	},
+	isExcluded: function(model,config) {
+		if(_.size(config) && config.hasOwnProperty('excludedModels')) {
+			if(config.excludedModels.indexOf(model.globalId) >=0) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
