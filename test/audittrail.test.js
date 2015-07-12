@@ -9,7 +9,6 @@ var Waterline = require('waterline'),
     _ = require('../node_modules/lodash'),
     Waterline = require('../node_modules/waterline'),
     sailsmemory = require('../node_modules/sails-memory'),
-    Barrels = require('barrels'),
     auditModel = require('../models/audittrail')
 
 describe("Audit Trail Test",function(){
@@ -195,11 +194,11 @@ describe("Audit Trail Test",function(){
         result.companyName = 'change company name for second';
         // Force 1s delay to make sure updatedAt is not the same.
         setTimeout(function() {
-          result.save(function(err,result){
+          result.save(function(err,newResult){
             AuditModel.find({
               foreignKey:2
-            },function(err,result) {
-              should(result).have.length(6)
+            },function(err,auditResult) {
+              should(auditResult).have.length(6)
               done()  
             })
         })

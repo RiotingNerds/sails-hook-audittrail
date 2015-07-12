@@ -76,7 +76,7 @@ module.exports = function(model,config,results) {
 	}
 
 	var saveDiff = function(changedValue,cb) {
-
+		
 		Auditor.create(changedValue,function(err,result) {
 			if(!_.isUndefined(cb)) {
 				if(err)

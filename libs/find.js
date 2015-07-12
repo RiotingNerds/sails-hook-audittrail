@@ -33,7 +33,10 @@ module.exports = function(model,config) {
         		var newResults = [];
 	        	_.forEach(results,function(value) {
 	        		value.auditor = new Auditor(model,config,value);
-	            	value.save = save(model,value);
+
+                    if(!_.isObject(value.save))
+                        value.save = save(model,value);
+	            	
 	            	newResults.push(value);
 	        	})
 		        callback(err,newResults);

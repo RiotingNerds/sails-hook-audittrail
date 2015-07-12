@@ -16,7 +16,7 @@ module.exports = function(classInstance,model) {
                 cb(err,newResult);
             }
         }
-        return new defaultMethods.save(classInstance, model, newSave);
+        return new defaultMethods.save(classInstance, model, newSave, cb);
     }
     return save;
 };
