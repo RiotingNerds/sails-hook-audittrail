@@ -1,6 +1,6 @@
 {
   "name": "sails-hook-audittrail",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "This hook will implement audit trail for your model",
   "main": "index.js",
   "sails": {
