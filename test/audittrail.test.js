@@ -1,9 +1,16 @@
 var Waterline = require('waterline'),
     findOne = require('../libs/findOne'),
+    findMethod = require('../libs/find'),
+    update = require('../libs/update'),
+    destroy = require('../libs/delete'),
+    create = require('../libs/create'),
     mocha = require('mocha'),
     should = require('../node_modules/should'),
+    _ = require('../node_modules/lodash'),
     Waterline = require('../node_modules/waterline'),
-    sailsmemory = require('../node_modules/sails-memory')
+    sailsmemory = require('../node_modules/sails-memory'),
+    Barrels = require('barrels'),
+    auditModel = require('../models/audittrail')
 
 describe("Audit Trail Test",function(){
 
@@ -24,7 +31,8 @@ describe("Audit Trail Test",function(){
       }
     });
   var CompanyCollection = Waterline.Collection.extend({
-    identity: 'company',
+      identity: 'company',
+      globalId: 'Company',
       connection: 'default',
       attributes: {
         companyName: {
@@ -52,10 +60,14 @@ describe("Audit Trail Test",function(){
   }
 
   var sailsConfig = {
-
+     connection: {
+        adapter: 'sails-memory'
+     },
+     excludedModels: [],
+     tableName:'audittrail'
   }
 
-  var User,Company;
+  var User,Company,AuditModel;
 
   before(function (done) {
 
@@ -68,66 +80,132 @@ describe("Audit Trail Test",function(){
           if (err) {
             done(err)
           }
-
+          
           User = ontology.collections.user;
           Company = ontology.collections.company;
-          done()
+
+          auditModel(sailsConfig).init(function(err,auditModel) {
+              AuditModel = auditModel
+              done();
+          });
+
+          
       });
   });
-
   describe("Create()",function() {
+    it('should patch correctly to create method',function(done) {
+      create(Company,sailsConfig)
+      done();
+    })
     it('should create a new company and Log',function(done) {
-        //findOne(Company)
-        console.log(Company);
-
-        Company.create({},function(err,model){
-          console(err);
-          if(err)
-            done(err)
-          console(err);
-          should(err).not.exists
-          console.log(model)
-          model.should.have.auditor
-          done()
-        });
-        
-
+        Company.create([{companyName:"testing company"},{companyName:'another testing company'}],function(err,model) {
+          //err.should.not.exists
+          AuditModel.findOne({
+            columnName:'companyName',
+            newValue:'testing company'
+          }).exec(function(err,result) {
+            should.not.exist(err)
+            result.should.have.property('operation','insert')
+            result.should.have.property('newValue','testing company')
+            AuditModel.find({
+              modelID:result.modelID
+            },function(err,result) {
+              should(result).have.length(8)
+              done()  
+            })
+            
+          })
+        })
     })
   });
 
-  describe("Find()",function() {
-    it('should only have name as attributes list',function(done) {
-        findOne(Company)
-        //console.log(Company);
-        Company.findOne({},function(err,model){
-          if(err)
-            done(err)
-          console(err);
-          should(err).not.exists
-          
-          model.should.have.auditor
-          done()
-        });
-        
-
-    })
-    it("Should only have companyName as attributes list",function(done) {
-      done()
-    })
-  });
   describe("FindOne()",function() {
+    it('should have auditor object in result found with the attribute property',function(done) {
+        findOne(Company,sailsConfig)
+        Company.findOne({id:1},function(err,model){
+          should.not.exist(err)
+          model.should.have.property('auditor')
+          model.auditor.should.not.be.empty()
+          model.auditor.should.have.property('attributes')
+          done()
+        });
+    });
+  });
+  describe("Find()",function() { 
     it('should only have name as attributes list',function(done) {
-        done()
-    })
-    it("Should only have companyName as attributes list",function(done) {
-      done()
+        findMethod(Company,sailsConfig)
+        Company.find({},function(err,model) {
+          should.not.exist(err)
+          model.should.have.length(2)
+          _.forEach(model,function(value){
+            value.should.have.property('auditor')
+          })
+          done()  
+        })
+        
     })
   });
   
   describe("Update()",function() {
-    
+    it('should update and log',function(done){
+      update(Company,sailsConfig)
+      // Force 1s delay to make sure updatedAt is not the same.
+      setTimeout(function(){
+          Company.update({id:1},{companyName:'change company name'},function(err,results){
+            should.not.exist(err)
+            results.should.have.length(1)
+            AuditModel.find({
+                foreignKey:1
+              },function(err,result) {
+                should(result).have.length(6)
+                result[4].should.have.property('columnName','companyName')
+                result[4].should.have.property('newValue','change company name')
+                result[4].should.have.property('oldValue','testing company')
+                result[4].should.have.property('operation','update')
+                done()  
+              })
+          })
+      },1000)
+    })
   });
   describe("Delete()",function() {
-    
+    it('should delete the record and log empty newValue',function(done){
+      destroy(Company,sailsConfig)
+      Company.destroy({id:1},function(err,results){
+        should.not.exist(err)
+        results.should.have.length(1)
+        AuditModel.find({
+            foreignKey:1
+          },function(err,result) {
+            should(result).have.length(10)
+            var checkResult = result[6]
+            checkResult.should.have.property('operation','delete')
+            checkResult.should.have.property('columnName','companyName')
+            checkResult.should.have.property('newValue','')
+            checkResult.should.have.property('oldValue','change company name')
+            done()  
+          })
+      })
+    })
+  })
+  describe('Save()',function(){
+    it('should be able to save and log the found result',function(done){
+      Company.findOne(2,function(err,result){
+        should.not.exist(err)
+        result.companyName = 'change company name for second';
+        // Force 1s delay to make sure updatedAt is not the same.
+        setTimeout(function() {
+          result.save(function(err,result){
+            AuditModel.find({
+              foreignKey:2
+            },function(err,result) {
+              should(result).have.length(6)
+              done()  
+            })
+        })
+        },1000)
+        
+      })
+    })
   })
 });

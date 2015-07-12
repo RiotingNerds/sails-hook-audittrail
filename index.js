@@ -17,7 +17,6 @@ module.exports = function(sails) {
         var config = {}
         if(sails.config.hasOwnProperty('audittrail'))
             config = sails.config.audittrail
-
         if(sails.config.connections.hasOwnProperty(config.connection)) {
             config.connection = sails.config.connections[config.connection]
         }

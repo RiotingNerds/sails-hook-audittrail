@@ -9,17 +9,23 @@ module.exports = function(config) {
 		table = config.tableName
 
 	var waterline = new Waterline();
+	
 
-	_.extend(config.connection,{adapter:'sails-mysql'})
+	var includeModule = config.connection.adapter || config.connection.module
+
+	var dbModule = require('../node_modules/'+includeModule)
 
 	var newConfig = {
 		adapters: {
-            'sails-mysql': mysql
-        },
+
+		},
 		connections: {
-			default: config.connection
+			auditorAdapterConnection: config.connection
 		}
 	}
+	
+	newConfig['adapters'][includeModule] = dbModule
+	
 	var auditModel = Waterline.Collection.extend({
 		identity: 'audittrail',
 	  // Define a custom table name
@@ -29,7 +35,7 @@ module.exports = function(config) {
 	  schema: true,
 
 	  // Define an adapter to use
-	  connection: 'default',
+	  connection: 'auditorAdapterConnection',
 
 	  // Define attributes for this collection
 	  attributes: {
@@ -63,11 +69,11 @@ module.exports = function(config) {
 	waterline.loadCollection(auditModel);
 	var init = function(cb) {
 		waterline.initialize(newConfig, function (err, ontology) {
-			if (err) {
+			if (err != null) {
 				cb(err)
 			}
-
 			var Audit = ontology.collections.audittrail;
+			config.model = Audit
 			cb(null,Audit)
 		});
 	}

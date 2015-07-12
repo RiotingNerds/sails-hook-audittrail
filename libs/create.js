@@ -48,8 +48,11 @@ module.exports = function(model,config) {
                     callback(error);
                 } else {
                     result.auditor = new Auditor(model,config)
-                    result.auditor.startAuditing(result)
-                    callback(null, result);
+                    result.auditor.startAuditing(result,null,function(err) {
+                        if(err)
+                            callback(err)
+                        callback(null, result);
+                    })
                 }
             });
     }

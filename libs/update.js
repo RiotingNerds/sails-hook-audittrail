@@ -2,7 +2,9 @@
 //import sails waterline Deferred
 var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferred'),
     Auditor = require('./auditor'),
-    ultis = require('./ultis')
+    ultis = require('./ultis'),
+    _ = require('../node_modules/lodash'),
+    async = require('../node_modules/async')
 
 /**
  * @description path sails `update()` method to allow
@@ -30,29 +32,38 @@ module.exports = function(model,config) {
             //model context
             return new Deferred(model, model.update, criterias, values);
         }
+        
         model.find(criterias,function(err,results) {
-            if(!err) {
+            if(err)
+                callback(err)
+            else {
                 sailsUpdate
-                .call(model, criterias, values, function(error, result) {
-                    //any update error
-                    //found?
-                    if (error) {
-                        callback(error);
-                    } else {
-                        //no error
-                        //return
-                        var PK = ultis.getPK(model)
-                        _.forEach(result,function(value) {
-                            _.forEach(results,function(originalValue) {  
-                                if(originalValue[PK] == value[PK]) {
-                                    originalValue.auditor.startAuditing(value);
-                                }
-                            })
-                        })
-                        callback(null, result);
-                    }
-                });
-            }
+                    .call(model, criterias, values, function(error, result) {
+                        //any update error
+                        //found?
+                        if (error) {
+                            callback(error);
+                        } else {
+                            //no error
+                            //return
+                            var PK = ultis.getPK(model)
+                            var auditingFunc = []
+                            _.forEach(result,function(value) {
+                                _.forEach(results,function(originalValue) {                                      
+                                    if(originalValue[PK] == value[PK]) {
+                                        var audit = function(cb) {
+                                            originalValue.auditor.startAuditing(value,null,cb)
+                                        }
+                                        auditingFunc.push(audit)
+                                    }
+                                })
+                            });
+                            async.parallel(auditingFunc, function(asyncErr){
+                                callback(asyncErr, result);
+                            });
+                        }
+                    });
+                }
             
         }) 
 

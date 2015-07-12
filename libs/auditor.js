@@ -51,38 +51,52 @@ module.exports = function(model,config,results) {
 		var timestamp = d.getTime();
 		_.forEach(originalValues,function(value,key){
 			var newValue = '';
-			if(newValues.hasOwnProperty(key)) {
-				if(value !== newValues[key]) {
-					newValue = newValues[key]
+			var foreignKey = newValues[PK] || originalValues[PK]
+			if(foreignKey != '') {
+				if(newValues.hasOwnProperty(key)) {
+					if(value.toString() !== newValues[key].toString()) {
+						newValue = newValues[key]
+					}
 				}
+				if(newValue != '' || currentOperation == availableOpertaion.del) {
+					changedValue.push({
+						columnName:key,
+						oldValue:value,
+						newValue:newValue,
+						modelID:referanceModel.globalId,
+						timestamp: timestamp,
+						foreignKey:foreignKey,
+						operation: currentOperation
+					});
+				}
+				
 			}
-			changedValue.push({
-				columnName:key,
-				oldValue:value,
-				newValue:newValues[key],
-				modelID:referanceModel.globalId,
-				timestamp: timestamp,
-				foreignKey:newValues[PK] || originalValues[PK],
-				operation: currentOperation
-			});
 		});
 		return changedValue;
 	}
 
-	var saveDiff = function(changedValue) {
-		console.log(changedValue);
-		Auditor.create(changedValue,function(err,newResult) {
+	var saveDiff = function(changedValue,cb) {
+
+		Auditor.create(changedValue,function(err,result) {
+			if(!_.isUndefined(cb)) {
+				if(err)
+					cb(err)
+				else 
+					cb(null)
+			}
 			
 		})
 	}
 
-	var startAuditing = function(newValues,operation) {
+	var startAuditing = function(newValues,operation,callback) {
+
 		if(_.size(newValues)==0)
 			currentOperation = availableOpertaion.del
-		if(!_.isUndefined(operation))
+		if(!_.isUndefined(operation) && operation != null)
 			currentOperation = operation
 		var changedValue = getValueDiff(newValues);
-		saveDiff(changedValue);
+
+		saveDiff(changedValue,callback);
 	}
 	if(_attributes.length == 0) {
 		var loopingAttr = referanceModel.attributes;
