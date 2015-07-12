@@ -9,7 +9,7 @@ var Waterline = require('waterline'),
     _ = require('../node_modules/lodash'),
     Waterline = require('../node_modules/waterline'),
     sailsmemory = require('../node_modules/sails-memory'),
-    auditModel = require('../models/audittrail')
+    auditModel = require('../models/auditTrail')
 
 describe("Audit Trail Test",function(){
 
