@@ -52,6 +52,7 @@ This will be individual configuration available for individual model.
 	  `updatedAt` datetime DEFAULT NULL,
 	  PRIMARY KEY (`id`)
 	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+The sql file is in data folder
 	
 ## Test
 	npm test
