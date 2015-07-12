@@ -14,8 +14,6 @@ Sails Audit Trail is to provide a simple way for tracking individual value chang
 ## Configuration
 ### Global Configuration
 
-./config/audittrail.js
-
 	// config/audittrail.js
 	module.exports.audittrail = {
 	   connection: "localDatabase",
@@ -29,8 +27,13 @@ Sails Audit Trail is to provide a simple way for tracking individual value chang
 ### Local Configuration
 This will be individual configuration available for individual model. 
 
-	{
-
+	module.exports = {
+		tableName: "user",
+		attributes: {
+			'name': {
+				type:'text'
+			}
+		},
 		auditorIgnoreAttr:['createdAt','updatedAt']
 	}
 - auditorIgnoreAttr must be a list of array of attributes that should be ignored when checking for data change
