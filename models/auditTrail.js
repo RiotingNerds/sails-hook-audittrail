@@ -1,7 +1,6 @@
 'use strict'
-var _ = require('../node_modules/lodash'),
-	Waterline = require('sails/node_modules/waterline'),
-	mysql = require('../node_modules/sails-mysql')
+var _ = require('lodash'),
+	Waterline = require('sails/node_modules/waterline')
 
 module.exports = function(config) {
 	var table = "audittrail"
@@ -13,7 +12,7 @@ module.exports = function(config) {
 
 	var includeModule = config.connection.adapter || config.connection.module
 
-	var dbModule = require('../node_modules/'+includeModule)
+	var dbModule = require(includeModule)
 
 	var newConfig = {
 		adapters: {

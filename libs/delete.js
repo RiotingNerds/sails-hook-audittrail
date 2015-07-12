@@ -3,8 +3,8 @@
 var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferred'),
     Auditor = require('./auditor'),
     ultis = require('./ultis'),
-    async = require('../node_modules/async'),
-    _ = require('../node_modules/lodash')
+    async = require('async'),
+    _ = require('lodash')
 
 /**
  * @description path sails `create()` method to allow

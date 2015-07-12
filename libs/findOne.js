@@ -2,7 +2,7 @@
 //import sails waterline Deferred
 var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferred'),
     Auditor = require('./auditor'),
-    _ = require('../node_modules/lodash'),
+    _ = require('lodash'),
     save = require('./save.js')
 
 /**
