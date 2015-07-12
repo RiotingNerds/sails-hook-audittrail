@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "This hook will implement audit trail for your model",
   "main": "index.js",
+  "license" : "BSD-3-Clause",
   "sails": {
     "isHook": true
   },
