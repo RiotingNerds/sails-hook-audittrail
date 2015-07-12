@@ -39,29 +39,31 @@ module.exports = function(config) {
 	  // Define attributes for this collection
 	  attributes: {
 	  	columnName: {
-	  		type: 'string'
+	  		type: 'string',
+	  		maxLength:1024
 	  	},
 	  	oldValue: {
-	  		type: 'string'
+	  		type: 'text'
 	  	},
-
-
 	  	newValue: {
-	  		type: 'string'
+	  		type: 'text'
 	  	},
 	  	modelID:{
-	  		type: 'string'
+	  		type: 'string',
+	  		maxLength:255
 	  	},
 
 	  	timestamp: {
-	  		type: 'string'
+	  		type: 'int',	  		
 	  	},
 	  	foreignKey:{
-	  		type: 'string'
+	  		type: 'string',
+	  		maxLength:125
 
 	  	},
 	  	operation: {
-	  		type: 'string'
+	  		type: 'string',
+	  		maxLength:15
 	  	}
 	  }
 	});

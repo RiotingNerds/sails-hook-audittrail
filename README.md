@@ -39,19 +39,23 @@ This will be individual configuration available for individual model.
 - auditorIgnoreAttr must be a list of array of attributes that should be ignored when checking for data change
 
 ### Database Schema
+	SET FOREIGN_KEY_CHECKS=0;
+	DROP TABLE IF EXISTS `audittrail`;
 	CREATE TABLE `audittrail` (
-	  `columnName` varchar(255) DEFAULT NULL,
-	  `oldValue` varchar(255) DEFAULT NULL,
-	  `newValue` varchar(255) DEFAULT NULL,
-	  `modelID` varchar(255) DEFAULT NULL,
-	  `timestamp` varchar(255) DEFAULT NULL,
-	  `foreignKey` varchar(255) DEFAULT NULL,
-	  `operation` varchar(255) DEFAULT NULL,
+	  `columnName` varchar(1024) CHARACTER SET latin1 DEFAULT NULL,
+	  `oldValue` longtext CHARACTER SET latin1,
+	  `newValue` longtext CHARACTER SET latin1,
+	  `modelID` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+	  `timestamp` int(11) DEFAULT NULL,
+	  `foreignKey` varchar(125) CHARACTER SET latin1 DEFAULT NULL,
+	  `operation` varchar(15) CHARACTER SET latin1 DEFAULT NULL,
 	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	  `createdAt` datetime DEFAULT NULL,
 	  `updatedAt` datetime DEFAULT NULL,
-	  PRIMARY KEY (`id`)
-	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+	  PRIMARY KEY (`id`),
+	  KEY `search` (`modelID`,`foreignKey`,`columnName`(767))
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 The sql file is in data folder
 	
 ## Test
