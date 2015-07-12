@@ -1,12 +1,15 @@
 var Waterline = require('waterline'),
     findOne = require('../libs/findOne'),
-    mocha = require('mocha')
-    should = require('../node_modules/should')
+    mocha = require('mocha'),
+    should = require('../node_modules/should'),
+    Waterline = require('../node_modules/waterline'),
+    sailsmemory = require('../node_modules/sails-memory')
 
 describe("Audit Trail Test",function(){
 
-  var User = Waterline.Collection.extend({
- 
+  var UserCollection = Waterline.Collection.extend({
+      identity: 'user',
+      connection: 'default',
       attributes: {
         name: {
           type: 'string'
@@ -20,7 +23,9 @@ describe("Audit Trail Test",function(){
         },
       }
     });
-  var Company = Waterline.Collection.extend({
+  var CompanyCollection = Waterline.Collection.extend({
+    identity: 'company',
+      connection: 'default',
       attributes: {
         companyName: {
           type: 'string'
@@ -34,11 +39,70 @@ describe("Audit Trail Test",function(){
         }
       }
     });
+  var waterline = new Waterline();
+  var newConfig = {
+    adapters: {
+        'memory': sailsmemory
+    },
+    connections: {
+      default: {
+        adapter: 'memory'
+      }
+    }
+  }
+
+  var sailsConfig = {
+
+  }
+
+  var User,Company;
+
+  before(function (done) {
+
+     // Hook will timeout in 10 seconds
+     this.timeout(11000);
+      waterline.loadCollection(UserCollection);
+      waterline.loadCollection(CompanyCollection);
+     // Attempt to lift sails
+       waterline.initialize(newConfig, function (err, ontology) {
+          if (err) {
+            done(err)
+          }
+
+          User = ontology.collections.user;
+          Company = ontology.collections.company;
+          done()
+      });
+  });
+
+  describe("Create()",function() {
+    it('should create a new company and Log',function(done) {
+        //findOne(Company)
+        console.log(Company);
+
+        Company.create({},function(err,model){
+          console(err);
+          if(err)
+            done(err)
+          console(err);
+          should(err).not.exists
+          console.log(model)
+          model.should.have.auditor
+          done()
+        });
+        
+
+    })
+  });
 
   describe("Find()",function() {
     it('should only have name as attributes list',function(done) {
-        //findOne(Company)
-        Company({},function(err,model){
+        findOne(Company)
+        //console.log(Company);
+        Company.findOne({},function(err,model){
+          if(err)
+            done(err)
+          console(err);
           should(err).not.exists
           
           model.should.have.auditor
@@ -59,9 +123,7 @@ describe("Audit Trail Test",function(){
       done()
     })
   });
-  describe("Save()",function() {
-    
-  });
+  
   describe("Update()",function() {
     
   });
