@@ -13,6 +13,8 @@ module.exports = function(model,config,results) {
 
 	var attributes = {};
 
+	var convAttr = {}
+
 	var Auditor =config.model
 
 	var availableOpertaion = {
@@ -44,6 +46,14 @@ module.exports = function(model,config,results) {
 		return attributes;
 	}
 
+	var normalizeValue = function(value) {
+		var returnValue = value
+		if(_.isNumber(value) || _.isDate(value)) {
+			returnValue = value.toString();
+		}
+		return returnValue
+	}
+
 	var getValueDiff = function(newValues) {
 		var changedValue = []
 		var originalValues = getOriginalAttributeValues();
@@ -53,11 +63,24 @@ module.exports = function(model,config,results) {
 			var newValue = '';
 			var foreignKey = newValues[PK] || originalValues[PK]
 			if(foreignKey != '') {
-				if(newValues.hasOwnProperty(key)) {
-					if(value.toString() !== newValues[key].toString()) {
-						newValue = newValues[key]
+				value = normalizeValue(value)
+
+				var normalizeDiffValue = function(checkKey){
+					var returnValue = '';
+					if(newValues.hasOwnProperty(checkKey)) {
+						newValues[checkKey] = normalizeValue(newValues[checkKey])
+						if(value !== newValues[checkKey]) {
+							returnValue = newValues[checkKey]
+						}
 					}
+					return returnValue
 				}
+
+				newValue = normalizeDiffValue(key)
+				if(convAttr.hasOwnProperty(key) && newValue == '') {
+					newValue = normalizeDiffValue(convAttr[key])
+				}
+
 				if(newValue != '' || currentOperation == availableOpertaion.del) {
 					changedValue.push({
 						columnName:key,
@@ -95,7 +118,6 @@ module.exports = function(model,config,results) {
 		if(!_.isUndefined(operation) && operation != null)
 			currentOperation = operation
 		var changedValue = getValueDiff(newValues);
-
 		saveDiff(changedValue,callback);
 	}
 	if(_attributes.length == 0) {
@@ -107,6 +129,9 @@ module.exports = function(model,config,results) {
 			if(!_.isFunction(value)) {
 				if(_.isUndefined(model.auditorIgnoreAttr) || _.indexOf(model.auditorIgnoreAttr,key)<0) {
 					if(!value.hasOwnProperty('collection')) {
+						var colName = key
+						if(value.hasOwnProperty('columnName'))
+							convAttr[key]=value['columnName']
 						_attributes.push(key);
 					}
 				}
