@@ -1,7 +1,7 @@
-# Sails Audit Trail  [![travis test](https://travis-ci.org/Antpolis/sails-hook-audittrail.svg?branch=master)](https://travis-ci.org/Antpolis/sails-hook-audittrail)
+# Sails Audit Trail  
+> Sails Audit Trail is to provide a simple way for tracking individual value changes. It will only log value changed and not value that is not changed.
 
-## Introduction
-Sails Audit Trail is to provide a simple way for tracking individual value changes. It will only log value changed and not value that is not changed.
+[![travis test](https://travis-ci.org/Antpolis/sails-hook-audittrail.svg?branch=master)](https://travis-ci.org/Antpolis/sails-hook-audittrail) [![npm version](https://badge.fury.io/js/sails-hook-audittrail.svg)](http://badge.fury.io/js/sails-hook-audittrail)
 
 ## Limitation
 - Log table is in structured format, so doesn't really benefit from NoSQL if its being used as log DB
