@@ -1,4 +1,4 @@
-# Sails Audit Trail  ![travis test](https://travis-ci.org/Antpolis/sails-hook-audittrail.svg?branch=master)
+# Sails Audit Trail  [![travis test](https://travis-ci.org/Antpolis/sails-hook-audittrail.svg?branch=master)](https://travis-ci.org/Antpolis/sails-hook-audittrail)
 
 ## Introduction
 Sails Audit Trail is to provide a simple way for tracking individual value changes. It will only log value changed and not value that is not changed.
