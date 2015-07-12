@@ -3,7 +3,6 @@
   "version": "0.0.2",
   "description": "This hook will implement audit trail for your model",
   "main": "index.js",
-  "license": "BSD-3-Clause",
   "sails": {
     "isHook": true
   },
@@ -21,5 +20,17 @@
     "sails-memory": "^0.10.5",
     "sails-mysql": "^0.10.12",
     "should": "^7.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Antpolis/sails-hook-audittrail"
+  },
+  "keywords": [
+    "sails",
+    "audit trail",
+    "versioning"
+  ],
+  "author": "Chris Sim",
+  "license": "MIT",
+  "readmeFilename": "README.md"
 }
