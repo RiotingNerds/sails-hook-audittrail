@@ -68,6 +68,11 @@ module.exports = function(config) {
 	  }
 	});
 	waterline.loadCollection(auditModel);
+	if(_.isUndefined(newConfig.connections.auditorAdapterConnection.adapter)) {
+		newConfig.connections.auditorAdapterConnection.adapter = includeModule
+	}
+
+
 	var init = function(cb) {
 		waterline.initialize(newConfig, function (err, ontology) {
 			if (err != null) {
