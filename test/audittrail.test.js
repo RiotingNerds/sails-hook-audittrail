@@ -129,6 +129,14 @@ describe("Audit Trail Test",function(){
           done()
         });
     });
+    it('should not set on undefined',function(done) {
+        findOne(Company,sailsConfig)
+        Company.findOne({id:112123123},function(err,model){
+          should.not.exist(err)
+          should.not.exist(model)
+          done()
+        });
+    });
   });
   describe("Find()",function() { 
     it('should only have name as attributes list',function(done) {
@@ -139,6 +147,15 @@ describe("Audit Trail Test",function(){
           _.forEach(model,function(value){
             value.should.have.property('auditor')
           })
+          done()  
+        })
+        
+    })
+    it('should not show error for error search',function(done) {
+        findMethod(Company,sailsConfig)
+        Company.find({id:321321321},function(err,model) {
+          should.not.exist(err)
+          model.should.have.length(0)
           done()  
         })
         
@@ -166,6 +183,14 @@ describe("Audit Trail Test",function(){
           })
       },1000)
     })
+    it('should not show error for invalid company',function(done) {        
+        Company.update({id:1123123123},{companyName:'change company name'},function(err,results){
+          should.not.exist(err)
+          results.should.have.length(0)
+          done();
+        })
+        
+    })
   });
   describe("Delete()",function() {
     it('should delete the record and log empty newValue',function(done){
@@ -185,6 +210,15 @@ describe("Audit Trail Test",function(){
             done()  
           })
       })
+
+    })
+    it('should not delete anything and no error',function(done){      
+      Company.destroy({id:1123123123},function(err,results){
+        should.not.exist(err)
+        results.should.have.length(0)
+        done()
+      })
+      
     })
   })
   describe('Save()',function(){

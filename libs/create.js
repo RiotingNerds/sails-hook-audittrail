@@ -1,6 +1,7 @@
 'use strict';
 //import sails waterline Deferred
 var Deferred = require('sails/node_modules/waterline/lib/waterline/query/deferred'),
+    _ = require('lodash'),
     Auditor = require('./auditor')
 
 /**
@@ -43,16 +44,20 @@ module.exports = function(model,config) {
         //call sails create
         sailsCreate
             .call(model, values, function(error, result) {
-                
                 if (error) {
                     callback(error);
                 } else {
-                    result.auditor = new Auditor(model,config)
-                    result.auditor.startAuditing(result,null,function(err) {
-                        if(err)
-                            callback(err)
-                        callback(null, result);
-                    })
+                    if(!_.isUndefined(result)) {
+                        result.auditor = new Auditor(model,config)
+                        result.auditor.startAuditing(result,null,function(err) {
+                            if(err)
+                                callback(err) 
+                            callback(null, result);
+                        })    
+                    } else {
+                        callback(null, result);    
+                    }
+                    
                 }
             });
     }

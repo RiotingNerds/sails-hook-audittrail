@@ -27,12 +27,14 @@ module.exports = function(model,config) {
 	    }
         //helper.getAttributesName();
         sailsFindOne.call(model,criteria,function(err,results) {
-            results.auditor = new Auditor(model,config,results);
-            
-            if(!_.isObject(results.save))
-                results.save = save(model,results);
-            
-	        callback(err,results);
+            if(err)
+                return callback(err)
+            if(!_.isUndefined(results)) {
+                results.auditor = new Auditor(model,config,results);
+                if(!_.isObject(results.save))
+                    results.save = save(model,results);
+            }
+            callback(err,results);
         });
     }
 
