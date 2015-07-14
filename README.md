@@ -1,5 +1,6 @@
 # Sails Audit Trail  
 > Sails Audit Trail is to provide a simple way for tracking individual value changes. It will only log value changed and not value that is not changed.
+> This is still under development, but most won't be much changes beside reflectoring.
 
 [![travis test](https://travis-ci.org/Antpolis/sails-hook-audittrail.svg?branch=master)](https://travis-ci.org/Antpolis/sails-hook-audittrail) [![npm version](https://badge.fury.io/js/sails-hook-audittrail.svg)](http://badge.fury.io/js/sails-hook-audittrail)
 
