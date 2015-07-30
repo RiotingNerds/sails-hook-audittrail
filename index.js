@@ -1,6 +1,7 @@
 //dependencies
 var path = require('path'),
     libPath = path.join(__dirname, 'libs'),
+    modelFolder = path.join(__dirname,'models'),
     findOne = require(path.join(libPath, 'findOne')),
     findM = require(path.join(libPath, 'find')),
     findOrCreate = require(path.join(libPath,'findOrCreate')),
@@ -8,7 +9,7 @@ var path = require('path'),
     create = require(path.join(libPath,'create')),
     destory = require(path.join(libPath,'delete')),
     ultis = require(path.join(libPath,'ultis')),
-    auditModel = require('./models/audittrail')
+    auditModel = require(path.join(modelFolder,'audittrail'))
 
 module.exports = function(sails) {
 
