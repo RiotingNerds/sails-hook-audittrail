@@ -9,7 +9,7 @@ var path = require('path'),
     create = require(path.join(libPath,'create')),
     destory = require(path.join(libPath,'delete')),
     ultis = require(path.join(libPath,'ultis')),
-    auditModel = require(path.join(modelFolder,'audittrail'))
+    auditModel = require(path.join(modelFolder,'auditTrail'))
 
 module.exports = function(sails) {
 
